@@ -14,6 +14,20 @@ describe "A lambda literal -> () { }" do
     klass.new.create_lambda.should.instance_of?(Proc)
   end
 
+  it "is not just syntactic sugar for Kernel#lambda" do
+    ruby_exe(<<~RUBY).should == "done"
+      module Kernel
+        def lambda(...)
+          print "Kernel#lambda called"
+        end
+      end
+
+      -> { }
+
+      print "done"
+    RUBY
+  end
+
   it "does not execute the block" do
     -> { fail }.should.instance_of?(Proc)
   end
